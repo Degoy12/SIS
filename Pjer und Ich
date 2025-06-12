@@ -1,0 +1,68 @@
+1. Authentifizierung
+BE	FE
+1.1 User-Modell (Beanie/ODMantic) + Indexe (email unique)	1.1 TS-Typen: User, AuthTokens, AuthContext
+1.2 Endpoints: /auth/register, /auth/login, /auth/refresh, /auth/me	1.2 Seiten/Komponenten: <RegisterPage/>, <LoginPage/>, Hook useAuth
+1.3 Security-Utils: bcrypt, JWT (Access/Refresh)	1.3 UI-Formulare, Validierung (react-hook-form + zod)
+1.4 Postman: Collection tests/auth.postman_collection.json	1.4 Speicherung der Tokens in localStorage + Context API
+Überprüfung BE: PT: register/login/refresh/me (Status 200/401/403)	Überprüfung FE: E2E (Playwright) — komplette User-Flows
+👤 2. Benutzerprofile
+BE	FE
+2.1 Profile-Dokument: name, bio, avatar_url, interests[]	2.1 Komponenten: <ProfileCard/>, <ImageUpload/>
+2.2 Endpoints: GET /users/:id, PUT /users/me	2.2 Seite <ProfilePage/> + Edit-Mode
+2.3 Indexe auf interests, created_at	2.3 Hooks: useFetchUser, useUpdateUser
+2.4 PT: tests/users.postman_collection.json	2.4 UT (Vitest) — Fetch-Mocks + <ProtectedRoute/>
+Überprüfung BE: UT/IT: Lese/Schreib-Szenarien, Autorisierung (403)	Überprüfung FE: E2E — Bio ändern → Seite neu laden → sichtbar
+📰 3. Feed und Posts
+BE	FE
+3.1 Post-Dokument: author_id, content, created_at	3.1 TS-Typen: Post, Comment
+3.2 Endpoints: POST /posts, GET /posts?limit&offset, GET /posts/:id	3.2 <FeedPage/>, <PostCard/>, <CreatePost/>
+3.3 POST /posts/:id/comment	3.3 <CommentSection/>
+3.4 Index { author_id:1, created_at:-1 }	3.4 Optimistisches UI-Update beim Erstellen
+3.5 PT: tests/posts.postman_collection.json	3.5 UT (Vitest) — Rendering, API-Mocks
+Überprüfung BE: IT: Pagination (limit/offset), Kommentar-Flow	Überprüfung FE: E2E — Post erstellen/kommentieren → sichtbar
+💓 4. Swipes und Matches
+BE	FE
+4.1 Collections swipes, matches	4.1 <SwipePage/>, <SwipeCard/>, <SwipeControls/>
+4.2 POST /swipe/:targetId (like/dislike) + Logik zur Erstellung von Matches	4.2 Batch-Laden von 20 Nutzern, Visualisierung von Like/Dislike
+4.3 GET /matches (nur bestätigte Matches)	4.3 <MatchesPage/>
+4.4 Indexe { user_id:1,target_id:1 }, { match_id:1 }	4.4 UT: Swipe-Reducer, Match-Modal
+4.5 PT: tests/swipes.postman_collection.json	4.5 E2E: Zwei Nutzer liken sich gegenseitig → MatchModal poppt auf
+Überprüfung BE: UT+IT: doppeltes Like → Match	Überprüfung FE: E2E Swipe-Flow
+💬 5. Chat und Nachrichten (WebSocket)
+BE	FE
+5.1 Message-Dokument: match_id, sender_id, content, created_at	5.1 <MessagesPage/>, <MessageList/>, <MessageInput/>
+5.2 WS-Endpoint /ws/chat/:matchId + Redis Pub/Sub (oder Mongo Change Streams)	5.2 WebSocket-Client: Reconnect, Notifications via useNotifications
+5.3 PT: tests/messages.postman_collection.json (HTTP-Teil)	5.3 UT: MessageList-Rendering, WS-Verbindung
+Überprüfung BE: IT: WebSocket-Echo-Test und Persistenz in Mongo	Überprüfung FE: E2E — zwei Browser-Tabs → Chat in beiden sichtbar
+🔔 6. PWA und Push-Benachrichtigungen
+BE	FE
+6.1 POST /notifications/subscribe (speichert endpoint + keys)	6.1 Service Worker (public/sw.js), Registrierung via vite-register
+6.2 Job-Handler pusht an alle Abonnenten (Cron oder Event-Hook)	6.2 UI: Toast, Badge-API, Hintergrund-Benachrichtigungen
+6.3 PT: tests/notifications.postman_collection.json	6.3 E2E (DevTools) — Push-Simulation
+Überprüfung BE: UT: Push-Queue, IT: Stub-Versand	Überprüfung FE: E2E — Nutzer abonniert → Push-Benachrichtigung erhalten
+🔐 7. Admin-Bereich und Sicherheit
+BE	FE
+7.1 Rolle admin, Collection roles, Endpunkt GET/DELETE /admin/users	7.1 UI-Komponente <AdminUsersPage/>
+7.2 Rate-Limit Middleware (10 req/min → 429)	7.2 FE: Umgang mit 429 & 401 (Auto-Logout)
+7.3 CORS, CSRF (Cookies), OpenAPI SecuritySchemes	7.3 API-Typen-Generierung (openapi-typescript + zod)
+7.4 PT: tests/admin.postman_collection.json	7.4 UT: Role-basierte Routenkontrolle
+Überprüfung BE: IT: Admin sieht alle Nutzer, non-admin nicht; Rate-Limit	Überprüfung FE: E2E — Admin-Workflow
+🚀 8. CI/CD und Deployment
+Aufgabe	Verantwortlich	Überprüfung
+8.1 Build & Push Docker-Images (api + client)	BE	GH Actions → Images im Registry
+8.2 Deployment auf Staging (auto-migrate-mongo)	BE / DevOps	staging.health → HTTP 200
+8.3 Smoke-E2E (Playwright headless)	FE	CI: Playwright-Workflow grün
+8.4 Dokumentation: OpenAPI → Swagger UI + Storybook	beide	verfügbar unter /docs und /storybook
+📝 Parallel arbeiten
+
+    Feature-Branch: Jeder Schritt (aus irgendeinem Abschnitt) bekommt einen eigenen PR.
+
+    API-Vertrag (OpenAPI + Postman) zuerst definieren und separat mergen → FE beginnt mit Mocks darauf basierend.
+
+    CI-Pipelines: BE und FE prüfen jeweils ihre Änderungen, aber beide Schritte beinhalten PT (Newman) für Konsistenz.
+
+    Regelmäßiger Sync: Nach jedem Merge im Backend → npm run generate:types (oder umgekehrt).
+
+    Jeder PR gilt als „fertig“, wenn lokal alle Tests (UT/IT), PT (Newman) und E2E grün sind.
+
+So könnt Ihr in allen Modulen parallel arbeiten und habt stets klare Prüf- und Freigabekriterien. Viel Erfolg!

@@ -1,0 +1,14 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+asyncpg
+databases
+motor
+PyJWT
+passlib[bcrypt]
+SQLAlchemy
+alembic
+redis
+pydantic
+httpx
+pytest
