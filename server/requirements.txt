@@ -1,0 +1,14 @@
+# requirements.txt для FastAPI-проекта
+fastapi
+uvicorn[standard]
+python-dotenv
+asyncpg
+databases
+motor
+PyJWT
+passlib[bcrypt]
+pytest
+httpx
+# optional
+SQLAlchemy
+alembic
