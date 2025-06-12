@@ -1,4 +1,0 @@
-# Diese Datei wird verwendet, um unnötige Dateien und Ordner aus dem Repository auszuschließen
-venv/
-.env
-__pycache__/
