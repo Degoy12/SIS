@@ -1,0 +1,173 @@
+1. Config ordner 
+2. design.ts datei erstellt - code von claude kopiert
+types -> index.ts -> claude code 
+layout.tsx urpsrungscode : danach gabs 9 fehler: import React from "react";
+
+const CenteredLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f5f6fa" }}>
+    <div style={{ background: "#fff", borderRadius: 16, boxShadow: "0 4px 24px rgba(0,0,0,0.08)", padding: 36, minWidth: 340, maxWidth: 420, width: "100%" }}>
+      {children}
+    </div>
+  </div>
+);
+
+export default CenteredLayout;
+
+App.tsx code angepasst: import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import FeedPage from "./pages/FeedPage";
+import ProfilePage from "./pages/ProfilePage";
+import LandingPage from "./pages/LandingPage";
+import RegisterPage from "./pages/RegisterPage";
+import LoginPage from "./pages/LoginPage";
+import CenteredLayout from "./components/Layout";
+
+function App() {
+  const isLoggedIn = Boolean(localStorage.getItem("email"));
+  return (
+    <Router>
+      <nav style={{ padding: 16 }}>
+        <Link to="/">Home</Link> | <Link to="/feed">Feed</Link> |{" "}
+        <Link to="/profile">Profile</Link> |{" "}
+        {!isLoggedIn && <Link to="/register">Register</Link>} |{" "}
+        {!isLoggedIn && <Link to="/login">Login</Link>}
+      </nav>
+      <div
+        style={{
+          minHeight: "calc(100vh - 56px)",
+          background: "#f5f6fa",
+        }}
+      >
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/feed" element={<FeedPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
+
+export default App;
+
+tsconfig. json angepasst: {
+  "compilerOptions": {
+    "target": "ESNext",
+    "useDefineForClassFields": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "typeRoots": ["./node_modules/@types", "./src/pages"]
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}
+
+vite config angepasst: import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { VitePWA } from 'vite-plugin-pwa'
+import path from 'path'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg}']
+      },
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      manifest: {
+        name: 'Sinsier - Sexpositive Community',
+        short_name: 'Sinsier',
+        description: 'Deine sexpositive Community-Plattform',
+        theme_color: '#762a82',
+        background_color: '#000000',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
+        orientation: 'portrait',
+        icons: [
+          {
+            src: 'pwa-192x192.png',
+            sizes: '192x192',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png'
+          },
+          {
+            src: 'pwa-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable'
+          }
+        ]
+      }
+    })
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+  server: {
+    port: 3002,
+    open: true
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true
+  }
+})
+
+package json angepasst:
+{
+  "name": "modern-pwa-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.23.0",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.21",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.19",
+    "eslint": "^8.57.0",
+    "eslint-plugin-react": "^7.34.1",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.5",
+    "vite": "^6.3.5",
+    "vite-plugin-pwa": "^1.0.0"
+  }
+}
+

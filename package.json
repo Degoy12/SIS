@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "styled-jsx": "^5.1.7"
+  }
+}
