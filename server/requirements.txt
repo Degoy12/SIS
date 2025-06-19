@@ -12,4 +12,5 @@ redis
 pydantic
 httpx
 pytest
-python-jose[cryptography]
+python-jose
+cryptography
