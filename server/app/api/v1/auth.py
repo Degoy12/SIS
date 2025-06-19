@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Request
 from pydantic import BaseModel
 from typing import Optional, List
 from passlib.hash import bcrypt
-from jose import jwt
+from jose import JWTError, jwt  # importiert beides – sollte funktionieren
 import sys
 import os
 import logging
