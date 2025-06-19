@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import CenteredLayout from "../components/Layout";
 
-const LoginPage = () => {
+const LoginPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -17,10 +16,10 @@ const LoginPage = () => {
       setError("E-Mail und Passwort sind erforderlich.");
       return;
     }
+
     setLoading(true);
     try {
       const response = await axios.post("http://localhost:3001/api/v1/auth/login", { email, password });
-      // Здесь предполагается, что backend возвращает JWT и nickname
       localStorage.setItem("email", email);
       localStorage.setItem("nickname", response.data.nickname || "");
       setLoading(false);
@@ -32,38 +31,58 @@ const LoginPage = () => {
   };
 
   return (
-    <CenteredLayout>
-      <h1 style={{ textAlign: "center", marginBottom: 24 }}>Login</h1>
-      {error && <div style={{color: 'red', marginBottom: 8}}>{error}</div>}
-      {loading && <div>Wird gesendet...</div>}
-      <form onSubmit={e => e.preventDefault()}>
-        <div style={{ marginBottom: 16 }}>
-          <label>E-Mail:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ccc", marginTop: 4 }}
-          />
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <label>Passwort:</label>
-          <input
-            type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            style={{ width: "100%", padding: 8, borderRadius: 6, border: "1px solid #ccc", marginTop: 4 }}
-          />
-        </div>
-        <div style={{ marginBottom: 16, display: "flex", alignItems: "center" }}>
-          <input type="checkbox" id="showpw" checked={showPassword} onChange={() => setShowPassword(!showPassword)} style={{ marginRight: 8 }} />
-          <label htmlFor="showpw" style={{ userSelect: "none" }}>Passwort anzeigen</label>
-        </div>
-        <button type="button" onClick={handleLogin} disabled={loading} style={{ width: "100%", padding: 10, borderRadius: 6, background: "#1976d2", color: "#fff", border: "none", fontWeight: 600, fontSize: 16, marginBottom: 10, cursor: loading ? "not-allowed" : "pointer" }}>
-          Login
-        </button>
-      </form>
-    </CenteredLayout>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-md p-6 dark:bg-gray-800">
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">Login</h1>
+
+        {error && <div className="text-red-600 mb-4 text-sm text-center">{error}</div>}
+        {loading && <div className="mb-4 text-center text-gray-500">Wird gesendet...</div>}
+
+        <form onSubmit={e => e.preventDefault()} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">E-Mail</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full p-2 rounded-md border border-gray-300 bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-600 dark:bg-gray-100"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Passwort</label>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full p-2 rounded-md border border-gray-300 bg-white text-black focus:outline-none focus:ring-2 focus:ring-purple-600 dark:bg-gray-100"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              type="checkbox"
+              id="showpw"
+              checked={showPassword}
+              onChange={() => setShowPassword(!showPassword)}
+              className="h-4 w-4 text-purple-600"
+            />
+            <label htmlFor="showpw" className="text-sm text-gray-700 dark:text-gray-300 select-none">
+              Passwort anzeigen
+            </label>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleLogin}
+            disabled={loading}
+            className="w-full bg-purple-700 hover:bg-purple-800 text-white font-semibold py-2 px-4 rounded-md disabled:opacity-50 transition"
+          >
+            Login
+          </button>
+        </form>
+      </div>
+    </div>
   );
 };
 

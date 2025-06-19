@@ -28,7 +28,7 @@ const RegisterPage = () => {
       setError("Das Passwort muss mindestens 8 Zeichen lang sein.");
       return;
     }
-    // Проверка возраста (20+)
+
     const birth = new Date(birthdate);
     const now = new Date();
     let age = now.getFullYear() - birth.getFullYear();
@@ -38,17 +38,15 @@ const RegisterPage = () => {
       setError("Nur Nutzer ab 20 Jahren.");
       return;
     }
+
     setLoading(true);
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/v1/auth/register",
-        {
-          nickname,
-          birthdate,
-          email,
-          password
-        }
-      );
+      const response = await axios.post("http://localhost:3001/api/v1/auth/register", {
+        nickname,
+        birthdate,
+        email,
+        password
+      });
       localStorage.setItem("nickname", nickname);
       localStorage.setItem("email", email);
       localStorage.setItem("birthdate", birthdate);
@@ -61,15 +59,14 @@ const RegisterPage = () => {
     }
   };
 
-  const handleLogin = () => {
-    console.log("Redirecting to login");
-    alert("Zur Login-Seite wechseln");
+  const handleLoginRedirect = () => {
+    navigate("/login");
   };
 
   return (
     <CenteredLayout>
       <h1 style={{ textAlign: "center", marginBottom: 24 }}>Registrieren</h1>
-      {error && <div style={{color: 'red', marginBottom: 8}}>{error}</div>}
+      {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
       {loading && <div>Wird gesendet...</div>}
       <form onSubmit={e => e.preventDefault()}>
         <div style={{ marginBottom: 16 }}>
@@ -124,8 +121,8 @@ const RegisterPage = () => {
         <button type="button" onClick={handleRegister} disabled={loading} style={{ width: "100%", padding: 10, borderRadius: 6, background: "#1976d2", color: "#fff", border: "none", fontWeight: 600, fontSize: 16, marginBottom: 10, cursor: loading ? "not-allowed" : "pointer" }}>
           Registrieren
         </button>
-        <button type="button" onClick={handleLogin} style={{ width: "100%", padding: 10, borderRadius: 6, background: "#e0e0e0", color: "#333", border: "none", fontWeight: 500, fontSize: 15, cursor: "pointer" }}>
-          Login
+        <button type="button" onClick={handleLoginRedirect} style={{ width: "100%", padding: 10, borderRadius: 6, background: "#e0e0e0", color: "#333", border: "none", fontWeight: 500, fontSize: 15, cursor: "pointer" }}>
+          Zur Login-Seite
         </button>
       </form>
     </CenteredLayout>
