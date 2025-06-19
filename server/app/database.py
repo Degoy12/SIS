@@ -1,11 +1,19 @@
-from motor.motor_asyncio import AsyncIOMotorClient
 import os
+from motor.motor_asyncio import AsyncIOMotorClient
+from dotenv import load_dotenv
 
-# Hole den Mongo-Link aus den Umgebungsvariablen bei Render
-MONGO_URI = os.environ.get("MONGO_URI")
+# Lädt Umgebungsvariablen aus einer .env-Datei (optional, aber nützlich lokal)
+load_dotenv()
 
-# Stelle Verbindung zur MongoDB her
+# Holt die URI für MongoDB aus den Umgebungsvariablen
+MONGO_URI = os.getenv("MONGO_URI")
+
+# Fehler werfen, wenn keine URI vorhanden ist
+if not MONGO_URI:
+    raise ValueError("MONGO_URI ist nicht gesetzt! Bitte Umgebungsvariable konfigurieren.")
+
+# MongoDB-Client starten
 client = AsyncIOMotorClient(MONGO_URI)
 
-# Nimm die Standard-Datenbank (aus dem Mongo-Link)
-db = client.get_default_database()
+# Hier den Namen deiner Datenbank einsetzen (z. B. "sinsier")
+db = client["sinsier-db"]
