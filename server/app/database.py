@@ -1,12 +1,11 @@
 from motor.motor_asyncio import AsyncIOMotorClient
-from fastapi import Request
 import os
 
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb://localhost:27017")
-MONGODB_DB = os.getenv("MONGODB_DB", "modern_pwa_mongo")
+# Hole den Mongo-Link aus den Umgebungsvariablen bei Render
+MONGO_URI = os.environ.get("MONGO_URI")
 
-client = AsyncIOMotorClient(MONGODB_URL)
-db = client[MONGODB_DB]
+# Stelle Verbindung zur MongoDB her
+client = AsyncIOMotorClient(MONGO_URI)
 
-def get_db(request: Request):
-    return db
+# Nimm die Standard-Datenbank (aus dem Mongo-Link)
+db = client.get_default_database()
