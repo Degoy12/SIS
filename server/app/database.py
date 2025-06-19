@@ -10,4 +10,6 @@ if not MONGO_URI:
     raise ValueError("MONGO_URI ist nicht gesetzt! Bitte Umgebungsvariable konfigurieren.")
 
 client = AsyncIOMotorClient(MONGO_URI)
-db = client["sample_mflix"]  # <- WICHTIG: Datenbankname hier fest angeben
+
+# Verwende jetzt automatisch die in der URI angegebene Datenbank
+db = client.get_default_database()
