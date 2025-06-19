@@ -1,14 +1,12 @@
 services:
   - type: web
-    name: sinsier-backend
-    env: python
-    buildCommand: ./server/build.sh
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
+    name: sinsier-client
+    env: node
+    rootDir: client
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11
-    buildFilter:
-      paths:
-        - server/**
+      - key: NODE_VERSION
+        value: 20.11.0
     plan: free
-    rootDir: server
+    autoDeploy: true
