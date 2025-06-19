@@ -12,3 +12,5 @@ redis
 pydantic
 httpx
 pytest
+python-jose
+
